@@ -1,0 +1,157 @@
+---
+title: "Exploring `gapminder` with `dplyr`"
+output: github_document
+---
+
+```{r, include = F}
+library(tidyverse)
+library(gapminder)
+library(knitr)
+```
+
+## Smell test the data
+
+### Is it a data.frame, matrix, vector, or list? 
+
+From the first line of the default print output, we can see that `gapminder` is a tibble.
+
+```{r}
+gapminder
+```
+
+Tibbles are fundamentally lists:
+
+```{r}
+typeof(gapminder)
+```
+
+... but they also inherit much of their behaviour from data.frames:
+
+```{r}
+class(gapminder)
+```
+
+### What is its class?
+
+As seen above, the class of `gapminder` is `tbl_df`, or in other works a tibble dataframe. This class inherits behvaiour from `tbl` (tibble) and data.frame.
+
+### How many variables/columns?
+
+```{r}
+ncol(gapminder)
+```
+
+There are 6 columns, or variables
+
+### How many rows/observations?
+
+```{r}
+nrow(gapminder)
+```
+
+There are 1704 rows, or observations
+
+### Can you get these facts about “extent” or “size” in more than one way? Can you imagine different functions being useful in different contexts?
+
+The `length()` function will also give us the number of columns, because a tibble is effectively a list of column vectors.
+
+```{r, echo = F}
+length(gapminder)
+```
+
+Conversely, the `dim()` function gives us the number of both columns and rows at once:
+
+```{r, echo = F}
+dim(gapminder)
+```
+
+The first line of the default print function for tibbles also report dimension:
+```{r, echo = F}
+gapminder
+```
+
+Simple numeric outputs like those of `ncol()`, `nrow()`, and `length()` can be useful in calculations, while prettier outputs like the default print might be nicer for just checking the dimensions while you are working with a dataset.
+
+### What data type is each variable?
+
+The second and third rows of the default print function list the variable names and types.
+
+```{r, echo = F}
+gapminder
+```
+
+Accordingly, `country` and `continent` are factors, `year` and `pop` are integers, and `lifeExp` and `gdpPercap` are doubles.
+
+
+## Explore Individual Variables
+
+I will work with the variables `continent` and `year`.
+
+### What are possible values (or range, whichever is appropriate) of each variable?
+
+These are the 5 possible values for `continent`:
+
+```{r}
+levels(gapminder$continent)
+```
+
+In contrast, the `year` ranges from 1952 - 2007:
+
+```{r}
+range(gapminder$year)
+```
+
+### What values are typical? What’s the spread? What’s the distribution? Etc., tailored to the variable at hand.
+
+Africa is the most common value for `continent`, Oceania the least.
+```{r, echo = F}
+kable(table(gapminder$continent))
+```
+
+Here are some summary stats for `year`. Note that since median and mean are the same, the variable has very little skew.
+```{r, echo = F}
+summary(gapminder$year)
+```
+
+More specifically, year appears to be uniformly distributed, which makes sense since it is included as an independent variable.
+
+```{r, echo = F}
+ggplot(gapminder, aes(year)) +
+  geom_histogram(binwidth = 1)
+```
+
+## Explore various plot types
+
+### How has life expectancy has changed over time in Australia and New Zealand?
+
+```{r, echo = F, message = F}
+gapminder %>%
+  filter(continent == 'Oceania') %>%
+  select(year, country, lifeExp) %>% #Not necessary, but just to say I did use select()
+  ggplot(aes(year, lifeExp, colour = country)) +
+    geom_point() +
+    stat_smooth(geom = "line", alpha = 0.5, se = F) +
+    labs(x = "Year", y = "Life Expectancy (years)")
+```
+
+### What does the distribution of GDP across Africa look like in 2007?
+
+```{r, echo = F, message = F}
+gapminder %>%
+  filter(year == '2007', continent == 'Africa') %>%
+  select(gdpPercap) %>% #Not necessary, but just to say I did use select()
+  ggplot(aes(gdpPercap)) +
+    geom_freqpoly(alpha = 0.5) +
+    labs(x = "GDP per Capita", y = "Frequency")
+```
+
+### How does life expectancy vary by continent in 1992?
+
+```{r, echo = F, message = F}
+gapminder %>%
+  filter(year == '1992') %>%
+  ggplot(aes(continent, lifeExp)) +
+    geom_violin() +
+    geom_boxplot(width=.1) +
+    labs(x = "Continent", y = "Life Expectancy (years)")
+```
