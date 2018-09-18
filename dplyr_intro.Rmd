@@ -108,7 +108,7 @@ Africa is the most common value for `continent`, Oceania the least.
 kable(table(gapminder$continent))
 ```
 
-Here are some summary stats for `year`. Note that since median and mean are the same, the variable has very little skew.
+Here are some summary stats for `year` generated using the `summary()` function. Note that since median and mean are the same, the variable has very little skew.
 ```{r, echo = F}
 summary(gapminder$year)
 ```
@@ -134,7 +134,7 @@ gapminder %>%
     labs(x = "Year", y = "Life Expectancy (years)")
 ```
 
-### What does the distribution of GDP across Africa look like in 2007?
+### What does the distribution of GDP per capita across Africa look like in 2007?
 
 ```{r, echo = F, message = F}
 gapminder %>%

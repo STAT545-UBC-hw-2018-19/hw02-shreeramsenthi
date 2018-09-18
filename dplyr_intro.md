@@ -187,7 +187,7 @@ Africa is the most common value for `continent`, Oceania the least.
 |Europe   |  360|
 |Oceania  |   24|
 
-Here are some summary stats for `year`. Note that since median and mean are the same, the variable has very little skew.
+Here are some summary stats for `year` generated using the `summary()` function. Note that since median and mean are the same, the variable has very little skew.
 
 ```
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
@@ -204,7 +204,7 @@ More specifically, year appears to be uniformly distributed, which makes sense s
 
 ![plot of chunk unnamed-chunk-16](figure/unnamed-chunk-16-1.png)
 
-### What does the distribution of GDP across Africa look like in 2007?
+### What does the distribution of GDP per capita across Africa look like in 2007?
 
 ![plot of chunk unnamed-chunk-17](figure/unnamed-chunk-17-1.png)
 
