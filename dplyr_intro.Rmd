@@ -67,7 +67,7 @@ dim(gapminder)
 
 The first line of the default print function for tibbles also report dimension:
 ```{r view2_gapminder}
-head(gapminder, n = 2) #Same output as `gapminder` with fewer lines
+gapminder
 ```
 
 Simple numeric outputs like those of `ncol()`, `nrow()`, and `length()` can be useful in calculations, while prettier outputs like the default print might be nicer for just checking the dimensions while you are working with a dataset.
