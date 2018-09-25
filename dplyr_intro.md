@@ -7,7 +7,7 @@ output: github_document
 
 ## Smell test the data
 
-### Is it a data.frame, matrix, vector, or list? 
+### Is it a data.frame, matrix, vector, or list?
 
 From the first line of the default print output, we can see that `gapminder` is a tibble.
 
@@ -179,6 +179,12 @@ range(gapminder$year)
 
 Africa is the most common value for `continent`, Oceania the least.
 
+```r
+kable(table(gapminder$continent)) #Pass the output of table() into kable() for prettier output
+```
+
+
+
 |Var1     | Freq|
 |:--------|----:|
 |Africa   |  624|
@@ -189,6 +195,10 @@ Africa is the most common value for `continent`, Oceania the least.
 
 Here are some summary stats for `year` generated using the `summary()` function. Note that since median and mean are the same, the variable has very little skew.
 
+```r
+summary(gapminder$year)
+```
+
 ```
 ##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
 ##    1952    1966    1980    1980    1993    2007
@@ -196,18 +206,45 @@ Here are some summary stats for `year` generated using the `summary()` function.
 
 More specifically, year appears to be uniformly distributed, which makes sense since it is included as an independent variable.
 
-![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-15-1.png)
+
+```r
+ggplot(gapminder, aes(year)) +
+  geom_histogram(binwidth = 1)
+```
+
+![plot of chunk histogram_year](figure/histogram_year-1.png)
 
 ## Explore various plot types
 
 ### How has life expectancy has changed over time in Australia and New Zealand?
 
-![plot of chunk unnamed-chunk-16](figure/unnamed-chunk-16-1.png)
+
+```r
+gapminder %>%
+  filter(continent == 'Oceania') %>% #Only look at Australia and New Zealand
+  select(year, country, lifeExp) %>% #Drop the unused variables. Not necessary, but just to say I did use select()
+  ggplot(aes(year, lifeExp, colour = country)) + #Note that the colour argument in aes will group the data for us
+    geom_point() +
+    stat_smooth(geom = "line", alpha = 0.5, se = F) +
+    labs(x = "Year", y = "Life Expectancy (years)")
+```
+
+![plot of chunk lifeExp_over_time_Oceania](figure/lifeExp_over_time_Oceania-1.png)
 
 ### What does the distribution of GDP per capita across Africa look like in 2007?
 
-![plot of chunk unnamed-chunk-17](figure/unnamed-chunk-17-1.png)
+
+```r
+gapminder %>%
+  filter(year == '2007', continent == 'Africa') %>% #Only look at African countries in 2007
+  select(gdpPercap) %>% #Once again not necessary
+  ggplot(aes(gdpPercap)) + #These graphs only need an x variable
+    geom_freqpoly(alpha = 0.5) +
+    labs(x = "GDP per Capita", y = "Frequency")
+```
+
+![plot of chunk gdpPercap_Africa](figure/gdpPercap_Africa-1.png)
 
 ### How does life expectancy vary by continent in 1992?
 
-![plot of chunk unnamed-chunk-18](figure/unnamed-chunk-18-1.png)
+![plot of chunk lifeExp_by_continent](figure/lifeExp_by_continent-1.png)

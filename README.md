@@ -2,4 +2,4 @@
 
 This repository holds my submission for the second homework assignment for the 2018 Fall iteration of the [STAT545](http://stat545.com) course at UBC. This assignment is meant as an introduction to the `tidyverse` group of packages, but in particular `dplyr` and `ggplot2`.
 
-Please see dplyr_intro.md for the code, commentary, responses to questions, and plots.
+Please see [dplyr_intro.md](https://github.com/STAT545-UBC-students/hw02-shreeramsenthi/blob/master/dplyr_intro.md) for the code, commentary, responses to questions, and plots.

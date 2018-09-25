@@ -3,7 +3,7 @@ title: "Exploring `gapminder` with `dplyr`"
 output: github_document
 ---
 
-```{r, include = F}
+```{r load_packages, include = F}
 library(tidyverse)
 library(gapminder)
 library(knitr)
@@ -11,23 +11,23 @@ library(knitr)
 
 ## Smell test the data
 
-### Is it a data.frame, matrix, vector, or list? 
+### Is it a data.frame, matrix, vector, or list?
 
 From the first line of the default print output, we can see that `gapminder` is a tibble.
 
-```{r}
+```{r view_gapminder}
 gapminder
 ```
 
 Tibbles are fundamentally lists:
 
-```{r}
+```{r typeof_gapminder}
 typeof(gapminder)
 ```
 
 ... but they also inherit much of their behaviour from data.frames:
 
-```{r}
+```{r class_gapminder}
 class(gapminder)
 ```
 
@@ -37,7 +37,7 @@ As seen above, the class of `gapminder` is `tbl_df`, or in other works a tibble 
 
 ### How many variables/columns?
 
-```{r}
+```{r ncol_gapminder}
 ncol(gapminder)
 ```
 
@@ -45,7 +45,7 @@ There are 6 columns, or variables
 
 ### How many rows/observations?
 
-```{r}
+```{r nrow_gapminder}
 nrow(gapminder)
 ```
 
@@ -55,18 +55,18 @@ There are 1704 rows, or observations
 
 The `length()` function will also give us the number of columns, because a tibble is effectively a list of column vectors.
 
-```{r, echo = F}
+```{r length_gapminder, echo = F}
 length(gapminder)
 ```
 
 Conversely, the `dim()` function gives us the number of both columns and rows at once:
 
-```{r, echo = F}
+```{r dim_gapminder, echo = F}
 dim(gapminder)
 ```
 
 The first line of the default print function for tibbles also report dimension:
-```{r, echo = F}
+```{r view2_gapminder, echo = F}
 gapminder
 ```
 
@@ -76,7 +76,7 @@ Simple numeric outputs like those of `ncol()`, `nrow()`, and `length()` can be u
 
 The second and third rows of the default print function list the variable names and types.
 
-```{r, echo = F}
+```{r view3_gapminder, echo = F}
 gapminder
 ```
 
@@ -91,31 +91,31 @@ I will work with the variables `continent` and `year`.
 
 These are the 5 possible values for `continent`:
 
-```{r}
+```{r levels_gapminder}
 levels(gapminder$continent)
 ```
 
 In contrast, the `year` ranges from 1952 - 2007:
 
-```{r}
+```{r range_gapminder}
 range(gapminder$year)
 ```
 
 ### What values are typical? What’s the spread? What’s the distribution? Etc., tailored to the variable at hand.
 
 Africa is the most common value for `continent`, Oceania the least.
-```{r, echo = F}
-kable(table(gapminder$continent))
+```{r kable_gapminder}
+kable(table(gapminder$continent)) #Pass the output of table() into kable() for prettier output
 ```
 
 Here are some summary stats for `year` generated using the `summary()` function. Note that since median and mean are the same, the variable has very little skew.
-```{r, echo = F}
+```{r summary_gapminder}
 summary(gapminder$year)
 ```
 
 More specifically, year appears to be uniformly distributed, which makes sense since it is included as an independent variable.
 
-```{r, echo = F}
+```{r histogram_year}
 ggplot(gapminder, aes(year)) +
   geom_histogram(binwidth = 1)
 ```
@@ -124,11 +124,11 @@ ggplot(gapminder, aes(year)) +
 
 ### How has life expectancy has changed over time in Australia and New Zealand?
 
-```{r, echo = F, message = F}
+```{r lifeExp_over_time_Oceania, message = F}
 gapminder %>%
-  filter(continent == 'Oceania') %>%
-  select(year, country, lifeExp) %>% #Not necessary, but just to say I did use select()
-  ggplot(aes(year, lifeExp, colour = country)) +
+  filter(continent == 'Oceania') %>% #Only look at Australia and New Zealand
+  select(year, country, lifeExp) %>% #Drop the unused variables. Not necessary, but just to say I did use select()
+  ggplot(aes(year, lifeExp, colour = country)) + #Note that the colour argument in aes will group the data for us
     geom_point() +
     stat_smooth(geom = "line", alpha = 0.5, se = F) +
     labs(x = "Year", y = "Life Expectancy (years)")
@@ -136,22 +136,22 @@ gapminder %>%
 
 ### What does the distribution of GDP per capita across Africa look like in 2007?
 
-```{r, echo = F, message = F}
+```{r gdpPercap_Africa, message = F}
 gapminder %>%
-  filter(year == '2007', continent == 'Africa') %>%
-  select(gdpPercap) %>% #Not necessary, but just to say I did use select()
-  ggplot(aes(gdpPercap)) +
+  filter(year == '2007', continent == 'Africa') %>% #Only look at African countries in 2007
+  select(gdpPercap) %>% #Once again not necessary
+  ggplot(aes(gdpPercap)) + #These graphs only need an x variable
     geom_freqpoly(alpha = 0.5) +
     labs(x = "GDP per Capita", y = "Frequency")
 ```
 
 ### How does life expectancy vary by continent in 1992?
 
-```{r, echo = F, message = F}
+```{r lifeExp_by_continent, echo = F, message = F}
 gapminder %>%
-  filter(year == '1992') %>%
+  filter(year == '1992') %>% #We only care about the year 1992
   ggplot(aes(continent, lifeExp)) +
     geom_violin() +
-    geom_boxplot(width=.1) +
+    geom_boxplot(width=.1) + #I like narrow boxplots inside my violin plots to see quartiles better
     labs(x = "Continent", y = "Life Expectancy (years)")
 ```
